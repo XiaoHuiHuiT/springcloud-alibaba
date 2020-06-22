@@ -1,0 +1,15 @@
+logging:
+  level:
+    cn.ddossec: debug # 日志级别
+
+server:
+  port: 8000 # 端口号
+
+spring:
+  application:
+    name: provide-goods # 服务名称
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:80 #nacos服务的地址 不要加http

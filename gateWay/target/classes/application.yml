@@ -1,0 +1,33 @@
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %clr(%5p) %clr(-){faint} %clr(%-80.80logger{79}){cyan} %clr(:) %m%n"
+
+server:
+  port: 9000
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:80 #nacos服务的地址 不要加http
+
+    gateway:
+      discovery:
+        locator:
+          enabled: true #从nacos当中获取服务信息
+      routes: #当请求满足要求时，转发到指定的服务当中
+        - id: goods_route  #唯一标识，默认是uuid
+          uri: lb://consumption-user  #请求要转发的地址
+          order: 1 #路由优先级 越小， 优先级越高
+          predicates: #谓词，断言（条件判断 转发请求要满足什么条件）
+            - Path=/api/**  #当路径中有指定内容时， 才会转发到指定uri
+            - Before=2020-12-30T23:59:59.789+08:00[Asia/Shanghai]
+            - Method=GET
+            - AppType=bs
+          filters: #过滤器，拦截请求做一些额外处理
+            - StripPrefix=1  #去掉添加的path内容 http://localhost:9000/api/getGoodsWithID
+            - SetStatus=310
+            - AddRequestHeader=my-request-name,leader_tblog
+            - LogStatus=true,true
